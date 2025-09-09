@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Student Login{% endblock %}
+
+{% block content %}
+  <h1 class="top-title">STUDENT LOGIN</h1>
+  
+  <!-- Flash messages (for invalid login) -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <form method="post" action="{{ url_for('student_login') }}" autocomplete="off">
+
+    <label for="sid">Student ID:</label>
+    <input id="sid" name="sid" placeholder="Enter Student ID" required>
+
+    <label for="password">Password:</label>
+    <input id="password" type="password" name="password" placeholder="Enter Password" required>
+
+    <div class="form-actions">
+      <button type="submit">LOGIN</button>
+      <a href="{{ url_for('home') }}">Back</a>
+    </div>
+  </form>
+{% endblock %}

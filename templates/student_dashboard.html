@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Student Dashboard</h2>
+
+<p><strong>Name:</strong> {{ student['name'] }}</p>
+<p><strong>ID:</strong> {{ student['sid'] }}</p>
+<p><strong>Email:</strong> {{ student['email'] }}</p>
+<p><strong>Phone:</strong> {{ student['phone'] }}</p>
+<p><strong>Total Fee:</strong> {{ student['total'] }}</p>
+<p><strong>Paid Amount:</strong> {{ student['paid_amount'] }}</p>
+<p><strong>Due Amount:</strong> {{ student['due_amount'] }}</p>
+
+{% if student['due_amount'] > 0 %}
+<form method="post" action="{{ url_for('request_admin_payment') }}">
+    <button type="submit">Request Admin Payment</button>
+</form>
+{% endif %}
+
+<a href="{{ url_for('student_logout') }}">Logout</a>
+{% endblock %}

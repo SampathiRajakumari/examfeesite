@@ -1,0 +1,133 @@
+/* -------------------- Global Colors -------------------- */
+body {
+    background-color: #111; /* dark background */
+    color: #fff; /* default text color white */
+    font-family: Arial, sans-serif;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+    color: #fff;
+}
+
+/* Form Labels */
+label {
+    color: #fff;
+    font-weight: 600;
+}
+
+/* Input Fields */
+input, select, textarea {
+    background-color: #222; /* dark input background */
+    color: #fff; /* white text inside input */
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 10px;
+    width: 100%;
+    outline: none;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: #3498db; /* blue accent on focus */
+    box-shadow: 0 0 5px rgba(52,152,219,0.5);
+}
+
+/* Buttons */
+.btn, button {
+    background-color: #3498db; /* blue button */
+    color: #fff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.btn:hover, button:hover {
+    background-color: #2980b9; /* darker blue on hover */
+}
+
+/* Tables */
+table, th, td {
+    border: 1px solid #333;
+}
+
+th {
+    background-color: #222;
+    color: #fff;
+}
+
+td {
+    background-color: #111;
+    color: #fff;
+}
+
+/* Flash messages */
+.flash.success { background-color: #133d1a; color: #8ff09b; }
+.flash.error { background-color: #3d1313; color: #ff9b9b; }
+.flash.info { background-color: #123544; color: #8fdbff; }
+
+/* Slides / Cards / Sections */
+.card, .slide {
+    background-color: #222;
+    color: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+}
+
+/* Links */
+a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #2980b9;
+}
+
+/* Section Titles */
+.section-title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 10px;
+}
+/* All text white */
+label, h1, h2, h3, h4, h5, h6, p, span, li {
+    color: #fff;
+}
+
+/* Input placeholder */
+input::placeholder {
+    color: #fff;
+    opacity: 0.8;
+}
+
+/* Card backgrounds */
+.card {
+    background: #222;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+/* Buttons blue */
+.btn {
+    background: #3498db;
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+}
+
+/* Button hover */
+.btn:hover {
+    background: #2980b9;
+}
+
+/* Flash messages white text on colored background */
+.flash.success { background:#133d1a; color:#8ff09b; }
+.flash.error { background:#3d1313; color:#ff9b9b; }
+.flash.info { background:#123544; color:#8fdbff; }

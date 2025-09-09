@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Login Page{% endblock %}
+
+{% block content %}
+  <h1 class="top-title">LOGIN PAGE</h1>
+
+  <div class="card grid two">
+    <div>
+      <p class="section-title">Choose a role</p>
+      <div class="btn-row">
+        <a class="btn" href="{{ url_for('admin_login') }}">Admin</a>
+        <a class="btn" href="{{ url_for('student_login') }}">Student</a>
+      </div>
+    </div>
+    <div>
+      
+    </div>
+  </div>
+{% endblock %}

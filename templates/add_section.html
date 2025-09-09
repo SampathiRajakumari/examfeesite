@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{{ branch['name'] }} - Sections</h2>
+
+<form method="post">
+    <label>New Section Name:</label>
+    <input type="text" name="section_name" placeholder="Enter section name" required>
+    <button type="submit" class="btn">Add Section</button>
+</form>
+
+<h3>Existing Sections:</h3>
+<div class="btn-row">
+    {% for sec in sections %}
+        <a href="{{ url_for('admin_add_student', branch_id=branch['id'], section_id=sec['id']) }}" class="btn">{{ sec['name'] }}</a>
+    {% endfor %}
+</div>
+<div class="form-actions" style="margin-top:40px;">
+    <a href="{{ url_for('admin_dashboard') }}" class="btn">Back to Dashboard</a>
+</div>
+
+{% endblock %}

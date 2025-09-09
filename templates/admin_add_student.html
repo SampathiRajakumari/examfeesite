@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Add Student - {{ branch['name'] }} / {{ section['name'] }}</h2>
+<form method="post">
+    <label>Student Name:</label>
+    <input type="text" name="name" required>
+
+    <label>Student ID:</label>
+    <input type="text" name="sid" required>
+
+    <label>Email:</label>
+    <input type="email" name="email" required>
+
+    <label>Phone:</label>
+    <input type="text" name="phone" required>
+
+    <label>Total Amount:</label>
+    <input type="number" name="total" required>
+
+    <label>Paid Amount:</label>
+    <input type="number" name="paid">
+
+    <label>Password:</label>
+    <input type="password" name="password" required>
+
+    <button type="submit" class="btn">Submit</button>
+</form>
+<a href="{{ url_for('add_section', branch_id=branch['id']) }}" class="btn">Back to Sections</a>
+{% endblock %}

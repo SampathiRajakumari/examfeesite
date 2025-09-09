@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Student Account{% endblock %}
+
+{% block content %}
+<div style="max-width: 500px; margin: 50px auto; padding: 20px; border-radius: 10px; background-color: #181818; color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+
+    <h2 style="text-align:center; margin-bottom:20px;">Student Account</h2>
+
+    {% if student %}
+        <p><strong>Name:</strong> {{ student['name'] }}</p>
+        <p><strong>Student ID:</strong> {{ student['sid'] }}</p>
+
+        <div style="margin-top:15px;">
+            <label>Total Amount:</label>
+            <input value="{{ '%.2f'|format(student['total']) }}" readonly 
+                   style="width:100%; padding:8px; margin-bottom:10px; border-radius:5px; border:1px solid #ccc;">
+            
+            <label>Paid Amount:</label>
+            <input value="{{ '%.2f'|format(student['paid_amount']) }}" readonly 
+                   style="width:100%; padding:8px; margin-bottom:10px; border-radius:5px; border:1px solid #ccc;">
+            
+            <label>Due Amount:</label>
+            <input value="{{ '%.2f'|format(student['due_amount']) }}" readonly 
+                   style="width:100%; padding:8px; margin-bottom:10px; border-radius:5px; border:1px solid #ccc; color:red; font-weight:bold;">
+        </div>
+
+        <a href="{{ url_for('student_logout') }}" 
+           style="display:block; text-align:center; margin-top:20px; background-color:#007BFF; color:#fff; padding:10px; text-decoration:none; border-radius:5px;">
+           Logout
+        </a>
+    {% else %}
+        <p style="text-align:center; color:red;">No student record found.</p>
+    {% endif %}
+</div>
+{% endblock %}

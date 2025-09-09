@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+<div class="wrapper">
+    <h1 class="top-title">Welcome, {{ student['name'] }}</h1>
+
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="card">
+        <h2 class="section-title">Your Details</h2>
+        <p><strong>Student ID:</strong> {{ student['sid'] }}</p>
+        <p><strong>Total Amount:</strong> {{ '%.2f'|format(student['total']) }}</p>
+        <p><strong>Paid Amount:</strong> {{ '%.2f'|format(student['paid_amount']) }}</p>
+        <p><strong>Due Amount:</strong> {{ '%.2f'|format(student['due_amount']) }}</p>
+        <p><strong>Fees Status:</strong> 
+            {% if student['due_amount'] == 0 %}
+                ✅ Paid
+            {% else %}
+                ❌ Pending
+            {% endif %}
+        </p>
+    </div>
+
+    <div class="form-actions" style="margin-top:20px;">
+        <a href="{{ url_for('student_logout') }}" class="btn">Logout</a>
+    </div>
+</div>
+{% endblock %}

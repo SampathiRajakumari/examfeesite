@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Admin Dashboard</h2>
+
+<h3>Branches</h3>
+<ul>
+{% for branch in branches %}
+    <li>{{ branch['name'] }} - <a href="{{ url_for('add_section', branch_id=branch['id']) }}">Manage Sections</a></li>
+{% endfor %}
+</ul>
+
+<h3>Students Requesting Admin Payment</h3>
+{% if requested_students %}
+<table border="1" cellpadding="5" cellspacing="0">
+    <tr>
+        <th>Student ID</th>
+        <th>Name</th>
+        <th>Due Amount</th>
+        <th>Action</th>
+    </tr>
+    {% for s in requested_students %}
+    <tr>
+        <td>{{ s['sid'] }}</td>
+        <td>{{ s['name'] }}</td>
+        <td>₹{{ s['balance'] }}</td>
+        <td>
+            <form method="post" action="{{ url_for('admin_pay_fee', sid=s['sid']) }}">
+                <input type="number" name="amount" placeholder="Enter amount" required>
+                <button type="submit" class="btn btn-success">Pay Fee</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>No students requesting payment.</p>
+{% endif %}
+
+<a href="{{ url_for('admin_logout') }}" class="btn btn-danger">Logout</a>
+{% endblock %}
