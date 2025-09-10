@@ -1,21 +1,47 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>{{ branch['name'] }} - Sections</h2>
 
-<form method="post">
-    <label>New Section Name:</label>
-    <input type="text" name="section_name" placeholder="Enter section name" required>
-    <button type="submit" class="btn">Add Section</button>
-</form>
+<style>
+    body {
+        background: url("{{ url_for('static', filename='add_sec.png') }}") no-repeat center center fixed;
+        background-size: cover;
+        font-family: Arial, sans-serif;
+    }
+    .content-box {
+        background: transparent; /* no white box */
+        padding: 20px;
+        border-radius: 12px;
+        max-width: 800px;
+        margin: auto;
+        color: #000; /* text black */
+    }
+    .content-box h2, 
+    .content-box h3, 
+    .content-box label,
+    .content-box p {
+        color: #000; /* force headings and labels black */
+    }
+</style>
 
-<h3>Existing Sections:</h3>
-<div class="btn-row">
-    {% for sec in sections %}
-        <a href="{{ url_for('admin_add_student', branch_id=branch['id'], section_id=sec['id']) }}" class="btn">{{ sec['name'] }}</a>
-    {% endfor %}
-</div>
-<div class="form-actions" style="margin-top:40px;">
-    <a href="{{ url_for('admin_dashboard') }}" class="btn">Back to Dashboard</a>
+<div class="content-box">
+    <h2>{{ branch['name'] }} - Sections</h2>
+
+    <form method="post">
+        <label>New Section Name:</label>
+        <input type="text" name="section_name" placeholder="Enter section name" required>
+        <button type="submit" class="btn">Add Section</button>
+    </form>
+
+    <h3>Existing Sections:</h3>
+    <div class="btn-row">
+        {% for sec in sections %}
+            <a href="{{ url_for('admin_add_student', branch_id=branch['id'], section_id=sec['id']) }}" class="btn">{{ sec['name'] }}</a>
+        {% endfor %}
+    </div>
+
+    <div class="form-actions" style="margin-top:40px;">
+        <a href="{{ url_for('admin_dashboard') }}" class="btn">Back to Dashboard</a>
+    </div>
 </div>
 
 {% endblock %}

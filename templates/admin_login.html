@@ -2,6 +2,52 @@
 {% block title %}Admin Login{% endblock %}
 
 {% block content %}
+
+<style>
+  body {
+      background: url("{{ url_for('static', filename='admin_login.png') }}") no-repeat center center fixed;
+      background-size: cover;
+      font-family: Arial, sans-serif;
+  }
+  .content-box {
+      background: transparent; /* fully transparent */
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 400px;
+      margin: auto;
+      text-align: center;
+      color: #000; /* black text */
+  }
+  .content-box h1 {
+      color: #000;
+      margin-bottom: 20px;
+  }
+  form.card {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: transparent; /* no background */
+      padding: 20px;
+      border-radius: 10px;
+  }
+  form.card label {
+      text-align: left;
+      font-weight: bold;
+      color: #000;
+  }
+  form.card input {
+      padding: 10px;
+      border: 1px solid #333;
+      border-radius: 6px;
+  }
+  .form-actions {
+      margin-top: 15px;
+      display: flex;
+      justify-content: space-between;
+  }
+</style>
+
+<div class="content-box">
   <h1 class="top-title">ADMIN</h1>
   <form class="card" method="post" autocomplete="off">
     <label>Username:</label>
@@ -15,4 +61,6 @@
       <a class="btn" href="{{ url_for('home') }}">Back</a>
     </div>
   </form>
+</div>
+
 {% endblock %}

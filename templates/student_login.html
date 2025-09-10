@@ -2,9 +2,93 @@
 {% block title %}Student Login{% endblock %}
 
 {% block content %}
+
+<style>
+  body {
+      background: url("{{ url_for('static', filename='stud_login.png') }}") no-repeat center center fixed;
+      background-size: cover;
+      font-family: Arial, sans-serif;
+      color: #000;
+  }
+  .content-box {
+      background: transparent;
+      padding: 25px;
+      border-radius: 12px;
+      max-width: 450px;
+      margin: 60px auto;
+      text-align: center;
+  }
+  .content-box h1 {
+      margin-bottom: 20px;
+      color: #000;
+  }
+  .content-box label {
+      display: block;
+      text-align: left;
+      margin-top: 10px;
+      font-weight: bold;
+      color: #000;
+  }
+  .content-box input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #555;
+      background: rgba(255, 255, 255, 0.7);
+      color: #000;
+  }
+  .form-actions {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+  }
+  .form-actions button {
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+  }
+  .form-actions button:hover {
+      background-color: #0056b3;
+  }
+  .form-actions a {
+      display: inline-block;
+      padding: 10px 15px;
+      background-color: #6c757d;
+      color: #fff;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: background 0.3s;
+  }
+  .form-actions a:hover {
+      background-color: #545b62;
+  }
+  .flash {
+      margin: 10px auto;
+      padding: 10px;
+      border-radius: 6px;
+      text-align: center;
+  }
+  .flash.error {
+      background: rgba(255, 0, 0, 0.2);
+      color: red;
+      border: 1px solid red;
+  }
+  .flash.success {
+      background: rgba(0, 128, 0, 0.2);
+      color: green;
+      border: 1px solid green;
+  }
+</style>
+
+<div class="content-box">
   <h1 class="top-title">STUDENT LOGIN</h1>
-  
-  <!-- Flash messages (for invalid login) -->
+
+  <!-- Flash messages -->
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
       {% for category, message in messages %}
@@ -14,7 +98,6 @@
   {% endwith %}
 
   <form method="post" action="{{ url_for('student_login') }}" autocomplete="off">
-
     <label for="sid">Student ID:</label>
     <input id="sid" name="sid" placeholder="Enter Student ID" required>
 
@@ -26,4 +109,6 @@
       <a href="{{ url_for('home') }}">Back</a>
     </div>
   </form>
+</div>
+
 {% endblock %}

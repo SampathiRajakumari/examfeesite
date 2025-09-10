@@ -1,29 +1,66 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Add Student - {{ branch['name'] }} / {{ section['name'] }}</h2>
-<form method="post">
-    <label>Student Name:</label>
-    <input type="text" name="name" required>
 
-    <label>Student ID:</label>
-    <input type="text" name="sid" required>
+<style>
+    body {
+        background: url("{{ url_for('static', filename='admin_add_stud.png') }}") no-repeat center center fixed;
+        background-size: cover;
+        font-family: Arial, sans-serif;
+    }
+    .content-box {
+        background: transparent; /* fully transparent */
+        padding: 20px;
+        border-radius: 12px;
+        max-width: 800px;
+        margin: auto;
+        color: #000; /* black text */
+    }
+    .content-box h2, 
+    .content-box label,
+    .content-box p {
+        color: #000; /* ensure headings, labels, and text are black */
+    }
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    form input {
+        padding: 8px;
+        border: 1px solid #555;
+        border-radius: 6px;
+    }
+</style>
 
-    <label>Email:</label>
-    <input type="email" name="email" required>
+<div class="content-box">
+    <h2>Add Student - {{ branch['name'] }} / {{ section['name'] }}</h2>
 
-    <label>Phone:</label>
-    <input type="text" name="phone" required>
+    <form method="post">
+        <label>Student Name:</label>
+        <input type="text" name="name" required>
 
-    <label>Total Amount:</label>
-    <input type="number" name="total" required>
+        <label>Student ID:</label>
+        <input type="text" name="sid" required>
 
-    <label>Paid Amount:</label>
-    <input type="number" name="paid">
+        <label>Email:</label>
+        <input type="email" name="email" required>
 
-    <label>Password:</label>
-    <input type="password" name="password" required>
+        <label>Phone:</label>
+        <input type="text" name="phone" required>
 
-    <button type="submit" class="btn">Submit</button>
-</form>
-<a href="{{ url_for('add_section', branch_id=branch['id']) }}" class="btn">Back to Sections</a>
+        <label>Total Amount:</label>
+        <input type="number" name="total" required>
+
+        <label>Paid Amount:</label>
+        <input type="number" name="paid">
+
+        <label>Password:</label>
+        <input type="password" name="password" required>
+
+        <button type="submit" class="btn">Submit</button>
+    </form>
+
+    <a href="{{ url_for('add_section', branch_id=branch['id']) }}" class="btn">Back to Sections</a>
+</div>
+
 {% endblock %}

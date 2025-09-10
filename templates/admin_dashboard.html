@@ -1,40 +1,92 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Admin Dashboard</h2>
 
-<h3>Branches</h3>
-<ul>
-{% for branch in branches %}
-    <li>{{ branch['name'] }} - <a href="{{ url_for('add_section', branch_id=branch['id']) }}">Manage Sections</a></li>
-{% endfor %}
-</ul>
+<style>
+    body {
+        background: url("{{ url_for('static', filename='admin_dashb.png') }}") no-repeat center center fixed;
+        background-size: cover;
+        font-family: Arial, sans-serif;
+    }
+    .content-box {
+        background: transparent; /* fully transparent */
+        padding: 20px;
+        border-radius: 12px;
+        max-width: 1000px;
+        margin: auto;
+        color: #000; /* black text */
+    }
+    .content-box h2, 
+    .content-box h3, 
+    .content-box p,
+    .content-box th,
+    .content-box td,
+    .content-box label {
+        color: #000; /* force black text everywhere */
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background: transparent; /* full transparent */
+    }
+    th, td {
+        border: 1px solid #000; /* black border */
+        padding: 10px;
+        text-align: center;
+        background: transparent; /* no white background */
+    }
+    ul {
+        list-style: none;
+        padding: 0;
+    }
+    ul li {
+        margin: 8px 0;
+    }
+    .btn {
+        margin-top: 8px;
+    }
+</style>
 
-<h3>Students Requesting Admin Payment</h3>
-{% if requested_students %}
-<table border="1" cellpadding="5" cellspacing="0">
-    <tr>
-        <th>Student ID</th>
-        <th>Name</th>
-        <th>Due Amount</th>
-        <th>Action</th>
-    </tr>
-    {% for s in requested_students %}
-    <tr>
-        <td>{{ s['sid'] }}</td>
-        <td>{{ s['name'] }}</td>
-        <td>₹{{ s['balance'] }}</td>
-        <td>
-            <form method="post" action="{{ url_for('admin_pay_fee', sid=s['sid']) }}">
-                <input type="number" name="amount" placeholder="Enter amount" required>
-                <button type="submit" class="btn btn-success">Pay Fee</button>
-            </form>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
-{% else %}
-<p>No students requesting payment.</p>
-{% endif %}
+<div class="content-box">
+    <h2>Admin Dashboard</h2>
 
-<a href="{{ url_for('admin_logout') }}" class="btn btn-danger">Logout</a>
+    <h3>Branches</h3>
+    <ul>
+        {% for branch in branches %}
+            <li>{{ branch['name'] }} - 
+                <a href="{{ url_for('add_section', branch_id=branch['id']) }}">Manage Sections</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h3>Students Requesting Admin Payment</h3>
+    {% if requested_students %}
+    <table>
+        <tr>
+            <th>Student ID</th>
+            <th>Name</th>
+            <th>Due Amount</th>
+            <th>Action</th>
+        </tr>
+        {% for s in requested_students %}
+        <tr>
+            <td>{{ s['sid'] }}</td>
+            <td>{{ s['name'] }}</td>
+            <td>₹{{ s['balance'] }}</td>
+            <td>
+                <form method="post" action="{{ url_for('admin_pay_fee', sid=s['sid']) }}">
+                    <input type="number" name="amount" placeholder="Enter amount" required>
+                    <button type="submit" class="btn btn-success">Pay Fee</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>No students requesting payment.</p>
+    {% endif %}
+
+    <a href="{{ url_for('admin_logout') }}" class="btn btn-danger">Logout</a>
+</div>
+
 {% endblock %}

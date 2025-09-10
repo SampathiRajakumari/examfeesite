@@ -3,6 +3,14 @@ body {
     background-color: #111; /* dark background */
     color: #fff; /* default text color white */
     font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+
+    /* 👇 అన్ని pages లో content center లో రావడానికి */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full screen height */
 }
 
 /* Headings */
@@ -25,6 +33,7 @@ input, select, textarea {
     padding: 10px;
     width: 100%;
     outline: none;
+    margin-top: 5px;
 }
 
 input:focus, select:focus, textarea:focus {
@@ -69,22 +78,14 @@ td {
 .flash.info { background-color: #123544; color: #8fdbff; }
 
 /* Slides / Cards / Sections */
-.card, .slide {
+.card, .slide, .form-box {
     background-color: #222;
     color: #fff;
     border-radius: 12px;
-    padding: 20px;
+    padding: 30px;
+    width: 350px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-}
-
-/* Links */
-a {
-    color: #3498db;
-    text-decoration: none;
-}
-
-a:hover {
-    color: #2980b9;
+    text-align: center;
 }
 
 /* Section Titles */
@@ -94,6 +95,7 @@ a:hover {
     color: #fff;
     margin-bottom: 10px;
 }
+
 /* All text white */
 label, h1, h2, h3, h4, h5, h6, p, span, li {
     color: #fff;
@@ -103,14 +105,6 @@ label, h1, h2, h3, h4, h5, h6, p, span, li {
 input::placeholder {
     color: #fff;
     opacity: 0.8;
-}
-
-/* Card backgrounds */
-.card {
-    background: #222;
-    padding: 20px;
-    border-radius: 12px;
-    margin-bottom: 20px;
 }
 
 /* Buttons blue */
@@ -126,6 +120,39 @@ input::placeholder {
 .btn:hover {
     background: #2980b9;
 }
+/* -------------------- Center Box for Dashboard -------------------- */
+.center-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* full height */
+}
+
+.card {
+    background: #222;
+    padding: 30px;
+    border-radius: 12px;
+    width: 400px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    text-align: left;
+}
+
+.card h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.card p {
+    margin: 8px 0;
+}
+
+.card .btn {
+    display: block;
+    width: 100%;
+    margin-top: 5px;
+    text-align: center;
+}
+
 
 /* Flash messages white text on colored background */
 .flash.success { background:#133d1a; color:#8ff09b; }

@@ -2,34 +2,84 @@
 {% block title %}Student Account{% endblock %}
 
 {% block content %}
-<div style="max-width: 500px; margin: 50px auto; padding: 20px; border-radius: 10px; background-color: #181818; color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
 
-    <h2 style="text-align:center; margin-bottom:20px;">Student Account</h2>
+<style>
+  body {
+      background: url("{{ url_for('static', filename='student_acc.png') }}") no-repeat center center fixed;
+      background-size: cover;
+      font-family: Arial, sans-serif;
+      color: #000;
+  }
+  .content-box {
+      background: transparent;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 600px;
+      margin: 50px auto;
+      text-align: left;
+  }
+  .content-box h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #000;
+  }
+  .content-box label {
+      font-weight: bold;
+      display: block;
+      margin-top: 10px;
+      color: #000;
+  }
+  .content-box input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: 1px solid #555;
+      background: rgba(255, 255, 255, 0.7);
+      color: #000;
+  }
+  .content-box input[style*="color:red"] {
+      color: red !important;
+      font-weight: bold;
+  }
+  .logout-btn {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      background-color: #007BFF;
+      color: #fff;
+      padding: 10px;
+      text-decoration: none;
+      border-radius: 5px;
+      transition: background 0.3s;
+  }
+  .logout-btn:hover {
+      background-color: #0056b3;
+  }
+</style>
+
+<div class="content-box">
+    <h2>Student Account</h2>
 
     {% if student %}
         <p><strong>Name:</strong> {{ student['name'] }}</p>
         <p><strong>Student ID:</strong> {{ student['sid'] }}</p>
 
-        <div style="margin-top:15px;">
+        <div>
             <label>Total Amount:</label>
-            <input value="{{ '%.2f'|format(student['total']) }}" readonly 
-                   style="width:100%; padding:8px; margin-bottom:10px; border-radius:5px; border:1px solid #ccc;">
-            
+            <input value="{{ '%.2f'|format(student['total']) }}" readonly>
+
             <label>Paid Amount:</label>
-            <input value="{{ '%.2f'|format(student['paid_amount']) }}" readonly 
-                   style="width:100%; padding:8px; margin-bottom:10px; border-radius:5px; border:1px solid #ccc;">
-            
+            <input value="{{ '%.2f'|format(student['paid_amount']) }}" readonly>
+
             <label>Due Amount:</label>
-            <input value="{{ '%.2f'|format(student['due_amount']) }}" readonly 
-                   style="width:100%; padding:8px; margin-bottom:10px; border-radius:5px; border:1px solid #ccc; color:red; font-weight:bold;">
+            <input value="{{ '%.2f'|format(student['due_amount']) }}" readonly style="color:red; font-weight:bold;">
         </div>
 
-        <a href="{{ url_for('student_logout') }}" 
-           style="display:block; text-align:center; margin-top:20px; background-color:#007BFF; color:#fff; padding:10px; text-decoration:none; border-radius:5px;">
-           Logout
-        </a>
+        <a href="{{ url_for('student_logout') }}" class="logout-btn">Logout</a>
     {% else %}
         <p style="text-align:center; color:red;">No student record found.</p>
     {% endif %}
 </div>
+
 {% endblock %}

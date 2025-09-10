@@ -1,20 +1,86 @@
 {% extends "base.html" %}
+{% block title %}Student Dashboard{% endblock %}
+
 {% block content %}
-<h2>Student Dashboard</h2>
 
-<p><strong>Name:</strong> {{ student['name'] }}</p>
-<p><strong>ID:</strong> {{ student['sid'] }}</p>
-<p><strong>Email:</strong> {{ student['email'] }}</p>
-<p><strong>Phone:</strong> {{ student['phone'] }}</p>
-<p><strong>Total Fee:</strong> {{ student['total'] }}</p>
-<p><strong>Paid Amount:</strong> {{ student['paid_amount'] }}</p>
-<p><strong>Due Amount:</strong> {{ student['due_amount'] }}</p>
+<style>
+  body {
+      background: url("{{ url_for('static', filename='stud_basbrd.png') }}") no-repeat center center fixed;
+      background-size: cover;
+      font-family: Arial, sans-serif;
+      color: #000;
+  }
+  .content-box {
+      background: transparent;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 600px;
+      margin: 50px auto;
+      text-align: left;
+  }
+  .content-box h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #000;
+  }
+  .content-box p {
+      margin: 8px 0;
+      font-size: 16px;
+      color: #000;
+  }
+  .btn {
+      display: inline-block;
+      padding: 10px 15px;
+      margin-top: 15px;
+      background-color: #007BFF;
+      color: #fff;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: background 0.3s;
+  }
+  .btn:hover {
+      background-color: #0056b3;
+  }
+  .form-actions {
+      margin-top: 20px;
+      text-align: center;
+  }
+  form button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+  }
+  form button:hover {
+      background-color: #1e7e34;
+  }
+</style>
 
-{% if student['due_amount'] > 0 %}
-<form method="post" action="{{ url_for('request_admin_payment') }}">
-    <button type="submit">Request Admin Payment</button>
-</form>
-{% endif %}
+<div class="content-box">
+    <h2>Student Dashboard</h2>
 
-<a href="{{ url_for('student_logout') }}">Logout</a>
+    <p><strong>Name:</strong> {{ student['name'] }}</p>
+    <p><strong>ID:</strong> {{ student['sid'] }}</p>
+    <p><strong>Email:</strong> {{ student['email'] }}</p>
+    <p><strong>Phone:</strong> {{ student['phone'] }}</p>
+    <p><strong>Total Fee:</strong> {{ student['total'] }}</p>
+    <p><strong>Paid Amount:</strong> {{ student['paid_amount'] }}</p>
+    <p><strong>Due Amount:</strong> <span style="color:red; font-weight:bold;">{{ student['due_amount'] }}</span></p>
+
+    {% if student['due_amount'] > 0 %}
+    <div class="form-actions">
+        <form method="post" action="{{ url_for('request_admin_payment') }}">
+            <button type="submit">Request Admin Payment</button>
+        </form>
+    </div>
+    {% endif %}
+
+    <div class="form-actions">
+        <a href="{{ url_for('student_logout') }}" class="btn">Logout</a>
+    </div>
+</div>
+
 {% endblock %}

@@ -2,35 +2,82 @@
 {% block title %}Student Dashboard{% endblock %}
 
 {% block content %}
-<div class="wrapper">
+
+<style>
+  body {
+      background: url("{{ url_for('static', filename='view_stud.png') }}") no-repeat center center fixed;
+      background-size: cover;
+      font-family: Arial, sans-serif;
+      color: #000;
+  }
+  .content-box {
+      background: transparent;
+      padding: 25px;
+      border-radius: 12px;
+      max-width: 600px;
+      margin: 50px auto;
+      text-align: left;
+  }
+  .content-box h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #000;
+  }
+  .card {
+      background: rgba(255, 255, 255, 0.7);
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 15px;
+  }
+  .card h2 {
+      margin-bottom: 15px;
+      text-align: center;
+      color: #000;
+  }
+  .card p {
+      margin: 8px 0;
+      font-size: 16px;
+      color: #000;
+  }
+  .form-actions {
+      margin-top: 20px;
+      text-align: center;
+  }
+  .btn {
+      display: inline-block;
+      padding: 10px 15px;
+      background-color: #007BFF;
+      color: #fff;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: background 0.3s;
+  }
+  .btn:hover {
+      background-color: #0056b3;
+  }
+  .flash {
+      margin: 10px auto;
+      padding: 10px;
+      border-radius: 6px;
+      text-align: center;
+  }
+  .flash.error {
+      background: rgba(255, 0, 0, 0.2);
+      color: red;
+      border: 1px solid red;
+  }
+  .flash.success {
+      background: rgba(0, 128, 0, 0.2);
+      color: green;
+      border: 1px solid green;
+  }
+</style>
+
+<div class="content-box">
     <h1 class="top-title">Welcome, {{ student['name'] }}</h1>
 
     <!-- Flash messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         {% for category, message in messages %}
-          <div class="flash {{ category }}">{{ message }}</div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-
-    <div class="card">
-        <h2 class="section-title">Your Details</h2>
-        <p><strong>Student ID:</strong> {{ student['sid'] }}</p>
-        <p><strong>Total Amount:</strong> {{ '%.2f'|format(student['total']) }}</p>
-        <p><strong>Paid Amount:</strong> {{ '%.2f'|format(student['paid_amount']) }}</p>
-        <p><strong>Due Amount:</strong> {{ '%.2f'|format(student['due_amount']) }}</p>
-        <p><strong>Fees Status:</strong> 
-            {% if student['due_amount'] == 0 %}
-                ✅ Paid
-            {% else %}
-                ❌ Pending
-            {% endif %}
-        </p>
-    </div>
-
-    <div class="form-actions" style="margin-top:20px;">
-        <a href="{{ url_for('student_logout') }}" class="btn">Logout</a>
-    </div>
-</div>
-{% endblock %}
+          <div

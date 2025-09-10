@@ -2,6 +2,44 @@
 {% block title %}Login Page{% endblock %}
 
 {% block content %}
+
+<style>
+  body {
+      background: url("{{ url_for('static', filename='home.png') }}") no-repeat center center fixed;
+      background-size: cover;
+      font-family: Arial, sans-serif;
+      color: #000;
+  }
+  .content-box {
+      background: transparent; /* fully transparent */
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 600px;
+      margin: auto;
+      text-align: center;
+  }
+  .content-box h1 {
+      color: #000;
+      margin-bottom: 20px;
+  }
+  .card {
+      background: transparent;
+      border: none;
+      padding: 20px;
+  }
+  .section-title {
+      font-weight: bold;
+      color: #000;
+      margin-bottom: 15px;
+  }
+  .btn-row {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+  }
+</style>
+
+<div class="content-box">
   <h1 class="top-title">LOGIN PAGE</h1>
 
   <div class="card grid two">
@@ -13,7 +51,9 @@
       </div>
     </div>
     <div>
-      
+      <!-- optional second column (can add image/illustration later) -->
     </div>
   </div>
+</div>
+
 {% endblock %}

@@ -5,6 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{% block title %}Fee Management{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+      body {
+        background: url("{{ url_for('static', filename='base.png') }}") no-repeat center center fixed;
+        background-size: cover;
+        font-family: Arial, sans-serif;
+        color: #000; /* make all text black */
+        margin: 0;
+        padding: 0;
+      }
+      .wrapper {
+        background: transparent; /* fully transparent */
+        max-width: 1200px;
+        margin: auto;
+        padding: 20px;
+      }
+      .flash {
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 6px;
+        font-weight: bold;
+        color: #000; /* ensure flash text is black */
+      }
+      .flash.success {
+        border: 2px solid green;
+        background: rgba(0, 255, 0, 0.1);
+      }
+      .flash.error {
+        border: 2px solid red;
+        background: rgba(255, 0, 0, 0.1);
+      }
+    </style>
   </head>
   <body>
     <div class="wrapper">
