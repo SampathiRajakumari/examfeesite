@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
+import razorpay
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
@@ -8,6 +9,11 @@ app.config['SESSION_PERMANENT'] = False
 app.config['SESSION_TYPE'] = "filesystem"
 
 DB_PATH = "fee.db"
+
+# -------------------- Razorpay Config --------------------
+RAZORPAY_KEY_ID = "rzp_test_xxxxxxxx"     # 🔹 Replace with your Key ID
+RAZORPAY_KEY_SECRET = "xxxxxxxxxxxxxxx"   # 🔹 Replace with your Key Secret
+razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
 
 # -------------------- Database --------------------
 def get_db_connection():
@@ -224,7 +230,7 @@ def student_dashboard():
     student_dict = dict(student)
     student_dict['paid_amount'] = student_dict['total'] - student_dict['balance']
     student_dict['due_amount'] = student_dict['balance']
-    return render_template("student_dashboard.html", student=student_dict)
+    return render_template("student_dashboard.html", student=student_dict, razorpay_key=RAZORPAY_KEY_ID)
 
 @app.route("/student/request_admin_payment", methods=["POST"])
 def request_admin_payment():
@@ -241,6 +247,57 @@ def request_admin_payment():
 def student_logout():
     session.pop("student_id", None)
     return redirect(url_for("home"))
+
+# -------------------- Online Payment --------------------
+@app.route("/student/pay", methods=["GET", "POST"])
+def student_pay():
+    if "student_id" not in session:
+        return redirect(url_for("student_login"))
+
+    sid = session["student_id"]
+    with get_db_connection() as conn:
+        student = conn.execute("SELECT * FROM students WHERE sid=?", (sid,)).fetchone()
+
+    if not student:
+        flash("Student not found", "danger")
+        return redirect(url_for("student_login"))
+
+    amount = int(student["balance"] * 100)  # Razorpay takes paise
+
+    # Create Razorpay Order
+    order = razorpay_client.order.create(dict(
+        amount=amount,
+        currency="INR",
+        payment_capture="1"
+    ))
+
+    return render_template("pay.html",
+                           student=student,
+                           amount=amount,
+                           razorpay_key=RAZORPAY_KEY_ID,
+                           order=order)
+
+@app.route("/payment/success", methods=["POST"])
+def payment_success():
+    data = request.form
+    # Verify signature
+    try:
+        razorpay_client.utility.verify_payment_signature(data)
+    except razorpay.errors.SignatureVerificationError:
+        flash("Payment verification failed ❌", "danger")
+        return redirect(url_for("student_dashboard"))
+
+    payment_id = data["razorpay_payment_id"]
+    sid = session.get("student_id")
+    if sid:
+        with get_db_connection() as conn:
+            student = conn.execute("SELECT * FROM students WHERE sid=?", (sid,)).fetchone()
+            if student:
+                conn.execute("UPDATE students SET balance=? WHERE sid=?", (0, sid))
+                conn.commit()
+
+    flash(f"Payment Successful ✅ Payment ID: {payment_id}", "success")
+    return redirect(url_for("student_dashboard"))
 
 # -------------------- Home --------------------
 @app.route("/")
