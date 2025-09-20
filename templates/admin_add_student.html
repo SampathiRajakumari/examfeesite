@@ -23,7 +23,7 @@ form {
     flex-direction: column;
     gap: 10px;
 }
-form input {
+form input, form select {
     padding: 8px;
     border: 1px solid #555;
     border-radius: 6px;
@@ -45,6 +45,24 @@ form input {
     <h2>Add Student - {{ branch['name'] }} / {{ section['name'] }}</h2>
 
     <form method="post">
+        <label>Department:</label>
+        <select name="branch_id" required>
+            {% for b in all_branches %}
+            <option value="{{ b['id'] }}" {% if b['id'] == branch['id'] %}selected{% endif %}>
+                {{ b['name'] }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <label>Section:</label>
+        <select name="section_id" required>
+            {% for sec in all_sections %}
+            <option value="{{ sec['id'] }}" {% if sec['id'] == section['id'] %}selected{% endif %}>
+                {{ sec['name'] }}
+            </option>
+            {% endfor %}
+        </select>
+
         <label>Student Name:</label>
         <input type="text" name="name" required>
 

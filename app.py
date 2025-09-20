@@ -124,23 +124,62 @@ def admin_pay_fee(sid):
     return redirect(url_for("admin_dashboard"))
 
 # -------------------- Sections --------------------
-@app.route("/admin/add_section/<int:branch_id>", methods=["GET", "POST"])
-def add_section(branch_id):
+@app.route("/admin/add_student/<int:branch_id>/<int:section_id>", methods=["GET", "POST"])
+def admin_add_student(branch_id, section_id):
     if "admin" not in session:
         return redirect(url_for("admin_login"))
+
     with get_db_connection() as conn:
+        # Current branch and section
         branch = conn.execute("SELECT * FROM branches WHERE id=?", (branch_id,)).fetchone()
-        sections = conn.execute("SELECT * FROM sections WHERE branch_id=?", (branch_id,)).fetchall()
+        section = conn.execute("SELECT * FROM sections WHERE id=?", (section_id,)).fetchone()
+
+        # All branches for dropdown
+        all_branches = conn.execute("SELECT * FROM branches").fetchall()
+
+        # All sections for the current branch
+        all_sections = conn.execute("SELECT * FROM sections WHERE branch_id=?", (branch_id,)).fetchall()
+
         if request.method == "POST":
-            section_name = request.form["section_name"]
+            sid = request.form["sid"]
+            name = request.form["name"]
+            email = request.form["email"]
+            phone = request.form["phone"]
+            total = float(request.form["total"])
+            paid = float(request.form.get("paid", 0))
+            balance = total - paid
+            raw_password = request.form["password"]
+            hashed_password = generate_password_hash(raw_password)
+
+            # Branch and Section from dropdown
+            selected_branch_id = int(request.form["branch_id"])
+            selected_section_id = int(request.form["section_id"])
+
             try:
-                conn.execute("INSERT INTO sections (branch_id,name) VALUES (?,?)", (branch_id, section_name))
+                conn.execute(
+                    "INSERT INTO students (sid,name,email,phone,total,balance,branch_id,section_id,password) VALUES (?,?,?,?,?,?,?,?,?)",
+                    (sid, name, email, phone, total, balance, selected_branch_id, selected_section_id, hashed_password)
+                )
                 conn.commit()
-                flash(f"Section {section_name} added to {branch['name']}", "success")
+                flash("Student added successfully ✅", "success")
             except sqlite3.IntegrityError:
-                flash("Section already exists!", "danger")
-            return redirect(url_for("add_section", branch_id=branch_id))
-    return render_template("add_section.html", branch=branch, sections=sections)
+                conn.execute(
+                    "UPDATE students SET name=?, email=?, phone=?, total=?, balance=?, password=?, branch_id=?, section_id=? WHERE sid=?",
+                    (name, email, phone, total, balance, hashed_password, selected_branch_id, selected_section_id, sid)
+                )
+                conn.commit()
+                flash("Student updated successfully 🔄", "info")
+
+            return redirect(url_for("admin_add_student", branch_id=branch_id, section_id=section_id))
+
+    return render_template(
+        "admin_add_student.html",
+        branch=branch,
+        section=section,
+        all_branches=all_branches,
+        all_sections=all_sections
+    )
+
 
 # -------------------- Students --------------------
 @app.route("/admin/add_student/<int:branch_id>/<int:section_id>", methods=["GET", "POST"])
