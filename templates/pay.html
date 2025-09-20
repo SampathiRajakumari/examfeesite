@@ -26,10 +26,18 @@
       box-shadow: 0 0 10px black;
       cursor: pointer;
     }
-    .note {
-      margin-top: 15px;
-      font-size: 14px;
-      color: #ddd;
+    button {
+      margin-top: 20px;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 8px;
+      background: #4CAF50;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #45a049;
     }
   </style>
 </head>
@@ -37,8 +45,12 @@
   <div class="card">
     <h3>Pay with UPI</h3>
     <p>Total Balance Due: ₹{{ student['balance'] }}</p>
-    <p class="note">Scan the QR code below to pay:</p>
     <img src="{{ url_for('static', filename='qrcode.jpg') }}" class="qr" alt="UPI QR Code">
+    
+    <!-- Payment Completed Button -->
+    <form action="{{ url_for('payment_success') }}" method="POST">
+      <button type="submit">✅ Payment Completed</button>
+    </form>
   </div>
 </body>
 </html>

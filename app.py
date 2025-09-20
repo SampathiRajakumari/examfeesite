@@ -264,10 +264,17 @@ def payment_success():
     sid = session.get("student_id")
     if sid:
         with get_db_connection() as conn:
+            # Set balance to 0 since student paid manually via UPI
             conn.execute("UPDATE students SET balance=0, admin_request=0 WHERE sid=?", (sid,))
             conn.commit()
-    flash("Payment marked as completed ✅", "success")
-    return redirect(url_for("student_dashboard"))
+
+            # Get updated student details
+            student = conn.execute("SELECT * FROM students WHERE sid=?", (sid,)).fetchone()
+        flash("Payment Successful ✅", "success")
+        return render_template("student_dashboard.html", student=dict(student))
+    flash("Student session expired. Login again.", "danger")
+    return redirect(url_for("student_login"))
+
 
 # -------------------- Home --------------------
 @app.route("/")
