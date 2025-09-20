@@ -264,16 +264,24 @@ def payment_success():
     sid = session.get("student_id")
     if sid:
         with get_db_connection() as conn:
-            # Set balance to 0 since student paid manually via UPI
+            # Update student balance to 0
             conn.execute("UPDATE students SET balance=0, admin_request=0 WHERE sid=?", (sid,))
             conn.commit()
 
             # Get updated student details
             student = conn.execute("SELECT * FROM students WHERE sid=?", (sid,)).fetchone()
+
+        # Convert to dict and calculate paid_amount & due_amount
+        student_dict = dict(student)
+        student_dict['paid_amount'] = student_dict['total'] - student_dict['balance']
+        student_dict['due_amount'] = student_dict['balance']
+
         flash("Payment Successful ✅", "success")
-        return render_template("student_dashboard.html", student=dict(student))
+        return render_template("student_dashboard.html", student=student_dict)
+
     flash("Student session expired. Login again.", "danger")
     return redirect(url_for("student_login"))
+
 
 
 # -------------------- Home --------------------
