@@ -251,7 +251,6 @@ def student_logout():
 
 # -------------------- Online Payment --------------------
 # -------------------- Online Payment via UPI --------------------
-# -------------------- Online Payment via UPI --------------------
 @app.route("/student/pay", methods=["GET"])
 def student_pay():
     if "student_id" not in session:
@@ -265,11 +264,16 @@ def student_pay():
         flash("Student not found", "danger")
         return redirect(url_for("student_login"))
 
-    # Dynamic amount for this student
-    amount = student["balance"]
-    upi_id = "sampathirajakumari@oksbi"  # Replace with your UPI ID
+    # ✅ Limit each transaction to 2000
+    amount = min(student["balance"], 2000)
 
-    return render_template("pay.html", student=student, amount=amount, upi_id=upi_id)
+    return render_template(
+        "pay.html",
+        student=student,
+        amount=amount,
+        upi_id="sampathirajakumari@oksbi"  # 🔹 your UPI ID
+    )
+
 
 
 @app.route("/payment_success", methods=["POST"])

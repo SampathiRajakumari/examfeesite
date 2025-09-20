@@ -64,7 +64,10 @@
       <img src="{{ url_for('static', filename='qrcode.jpg') }}" alt="UPI QR Code" class="qr">
     </a>
 
-    <p class="note">Scan QR or click it to open UPI app.</p>
+    <p class="note">
+      Scan QR or click to open UPI app.<br>
+      ⚠️ Max ₹2000 per transaction. If dues >2000, please pay multiple times.
+    </p>
 
     <!-- Optional button to open UPI -->
     <a href="upi://pay?pa={{ upi_id }}&pn={{ student['name'] }}&am={{ amount }}&cu=INR">
