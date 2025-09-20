@@ -2,92 +2,59 @@
 {% block content %}
 
 <style>
-body {
-    background: url("{{ url_for('static', filename='admin_dashb.png') }}") no-repeat center center fixed;
-    background-size: cover;
-    font-family: Arial, sans-serif;
-}
-.content-box {
-    background: rgba(255,255,255,0.1); /* semi-transparent */
-    padding: 25px;
-    border-radius: 12px;
-    max-width: 1100px;
-    margin: auto;
-    color: #000;
-}
-.content-box h2, h3, p, th, td, label {
-    color: #000;
-}
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    background: transparent;
-}
-th, td {
-    border: 1px solid #000;
-    padding: 10px;
-    text-align: center;
-}
-tr.pending {
-    background-color: rgba(255, 200, 200, 0.3); /* highlight students with due */
-}
-ul {
-    list-style: none;
-    padding: 0;
-}
-ul li {
-    margin: 8px 0;
-}
-.btn {
-    margin-top: 8px;
-    padding: 6px 12px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-.btn-success {
-    background-color: #4CAF50;
-    color: white;
-}
-.btn-success:hover {
-    background-color: #45a049;
-}
-.btn-danger {
-    background-color: #f44336;
-    color: white;
-}
-.btn-danger:hover {
-    background-color: #d32f2f;
-}
-.btn-add {
-    background-color: #2196F3;
-    color: white;
-}
-.btn-add:hover {
-    background-color: #0b7dda;
-}
+    body {
+        background: url("{{ url_for('static', filename='admin_dashb.png') }}") no-repeat center center fixed;
+        background-size: cover;
+        font-family: Arial, sans-serif;
+    }
+    .content-box {
+        background: transparent; /* fully transparent */
+        padding: 20px;
+        border-radius: 12px;
+        max-width: 1000px;
+        margin: auto;
+        color: #000; /* black text */
+    }
+    .content-box h2, 
+    .content-box h3, 
+    .content-box p,
+    .content-box th,
+    .content-box td,
+    .content-box label {
+        color: #000; /* force black text everywhere */
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background: transparent; /* full transparent */
+    }
+    th, td {
+        border: 1px solid #000; /* black border */
+        padding: 10px;
+        text-align: center;
+        background: transparent; /* no white background */
+    }
+    ul {
+        list-style: none;
+        padding: 0;
+    }
+    ul li {
+        margin: 8px 0;
+    }
+    .btn {
+        margin-top: 8px;
+    }
 </style>
 
 <div class="content-box">
     <h2>Admin Dashboard</h2>
 
-    <h3>Branches & Sections</h3>
+    <h3>Branches</h3>
     <ul>
         {% for branch in branches %}
-            <li>
-                <strong>{{ branch['name'] }}</strong> - 
+            <li>{{ branch['name'] }} - 
                 <a href="{{ url_for('add_section', branch_id=branch['id']) }}">Manage Sections</a>
-                {% set sections = get_sections(branch['id']) %}
-                <ul>
-                    {% for sec in sections %}
-                        <li>
-                            Section {{ sec['name'] }} -
-                            <a href="{{ url_for('admin_add_student', branch_id=branch['id'], section_id=sec['id']) }}" class="btn btn-add">Add Student</a> |
-                            <a href="{{ url_for('view_students', branch_id=branch['id'], section_id=sec['id']) }}">View Students</a>
-                        </li>
-                    {% endfor %}
-                </ul>
             </li>
         {% endfor %}
     </ul>
@@ -102,13 +69,13 @@ ul li {
             <th>Action</th>
         </tr>
         {% for s in requested_students %}
-        <tr class="{% if s['balance'] > 0 %}pending{% endif %}">
+        <tr>
             <td>{{ s['sid'] }}</td>
             <td>{{ s['name'] }}</td>
             <td>₹{{ s['balance'] }}</td>
             <td>
-                <form method="post" action="{{ url_for('admin_pay_fee', sid=s['sid']) }}" onsubmit="return confirm('Are you sure you want to pay this amount?');">
-                    <input type="number" name="amount" placeholder="Enter amount" max="{{ s['balance'] }}" required>
+                <form method="post" action="{{ url_for('admin_pay_fee', sid=s['sid']) }}">
+                    <input type="number" name="amount" placeholder="Enter amount" required>
                     <button type="submit" class="btn btn-success">Pay Fee</button>
                 </form>
             </td>
