@@ -31,6 +31,14 @@
       font-size: 14px;
       color: #ddd;
     }
+    input[type=number] {
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      width: 80px;
+      font-size: 16px;
+      margin-top: 10px;
+    }
     button {
       margin-top: 15px;
       padding: 12px 25px;
@@ -44,35 +52,28 @@
     button:hover {
       background: #45a049;
     }
-    img.optional {
-      width: 200px;
-      margin-bottom: 20px;
-      border-radius: 10px;
-    }
   </style>
 </head>
 <body>
   <div class="card">
     <h3>Pay with UPI</h3>
-    <p>Amount Due: ₹{{ amount }}</p>
+    <p>Total Balance Due: ₹{{ student['balance'] }}</p>
 
-    <!-- Optional image -->
-    <img src="{{ url_for('static', filename='optional.png') }}" class="optional" alt="Optional Image">
+    <form action="{{ url_for('student_generate_upi') }}" method="POST">
+      <label>Enter Amount to Pay:</label><br>
+      <input type="number" name="amount" min="1" max="{{ student['balance'] }}" value="{{ student['balance'] }}" required><br>
+      <button type="submit">✅ Generate UPI Payment</button>
+    </form>
 
-    <!-- QR code clickable to UPI payment -->
-    <a href="upi://pay?pa={{ upi_id }}&pn={{ student['name'] }}&am={{ amount }}&cu=INR" target="_blank">
-      <img src="{{ url_for('static', filename='qrcode.jpg') }}" alt="UPI QR Code" class="qr">
-    </a>
-
-    <p class="note">
-      Scan QR or click to open UPI app.<br>
-      ⚠️ Max ₹2000 per transaction. If dues >2000, please pay multiple times.
-    </p>
-
-    <!-- Optional button to open UPI -->
-    <a href="upi://pay?pa={{ upi_id }}&pn={{ student['name'] }}&am={{ amount }}&cu=INR">
-      <button>✅ Pay ₹{{ amount }} via UPI</button>
-    </a>
+    {% if upi_link %}
+      <p class="note">Click QR or link below to pay:</p>
+      <a href="{{ upi_link }}" target="_blank">
+        <img src="{{ url_for('static', filename='qrcode.jpg') }}" class="qr" alt="UPI QR Code">
+      </a>
+      <p class="note">
+        <a href="{{ upi_link }}" target="_blank">Open in UPI App</a>
+      </p>
+    {% endif %}
   </div>
 </body>
 </html>
