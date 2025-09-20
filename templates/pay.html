@@ -61,18 +61,20 @@
 
     <form action="{{ url_for('student_generate_upi') }}" method="POST">
       <label>Enter Amount to Pay:</label><br>
+      <!-- Allow full balance payment -->
       <input type="number" name="amount" min="1" max="{{ student['balance'] }}" value="{{ student['balance'] }}" required><br>
       <button type="submit">✅ Generate UPI Payment</button>
     </form>
 
     {% if upi_link %}
-      <p class="note">Click QR or link below to pay:</p>
+      <p class="note">Click QR or link below to pay via UPI:</p>
       <a href="{{ upi_link }}" target="_blank">
         <img src="{{ url_for('static', filename='qrcode.jpg') }}" class="qr" alt="UPI QR Code">
       </a>
       <p class="note">
         <a href="{{ upi_link }}" target="_blank">Open in UPI App</a>
       </p>
+      <p class="note">Your UPI ID: <b>7207121020@axl</b></p>
     {% endif %}
   </div>
 </body>
