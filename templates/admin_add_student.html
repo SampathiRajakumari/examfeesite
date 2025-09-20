@@ -2,34 +2,43 @@
 {% block content %}
 
 <style>
-    body {
-        background: url("{{ url_for('static', filename='admin_add_stud.png') }}") no-repeat center center fixed;
-        background-size: cover;
-        font-family: Arial, sans-serif;
-    }
-    .content-box {
-        background: transparent; /* fully transparent */
-        padding: 20px;
-        border-radius: 12px;
-        max-width: 800px;
-        margin: auto;
-        color: #000; /* black text */
-    }
-    .content-box h2, 
-    .content-box label,
-    .content-box p {
-        color: #000; /* ensure headings, labels, and text are black */
-    }
-    form {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-    form input {
-        padding: 8px;
-        border: 1px solid #555;
-        border-radius: 6px;
-    }
+body {
+    background: url("{{ url_for('static', filename='admin_add_stud.png') }}") no-repeat center center fixed;
+    background-size: cover;
+    font-family: Arial, sans-serif;
+}
+.content-box {
+    background: transparent; 
+    padding: 20px;
+    border-radius: 12px;
+    max-width: 800px;
+    margin: auto;
+    color: #000;
+}
+.content-box h2, label, p {
+    color: #000;
+}
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+form input {
+    padding: 8px;
+    border: 1px solid #555;
+    border-radius: 6px;
+}
+.btn {
+    padding: 10px 15px;
+    background-color: #007BFF;
+    color: #fff;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+}
+.btn:hover {
+    background-color: #0056b3;
+}
 </style>
 
 <div class="content-box">
