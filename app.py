@@ -103,18 +103,14 @@ def admin_dashboard():
 def admin_pay_fee(sid):
     if "admin" not in session:
         return redirect(url_for("admin_login"))
-    
     amount = float(request.form["amount"])
-    
     with get_db_connection() as conn:
         student = conn.execute("SELECT balance FROM students WHERE sid=?", (sid,)).fetchone()
         if student:
             new_balance = student["balance"] - amount
-            if new_balance <= 0:
+            admin_request = 1 if new_balance > 0 else 0
+            if new_balance < 0:
                 new_balance = 0
-                admin_request = 0
-            else:
-                admin_request = 1
             conn.execute(
                 "UPDATE students SET balance=?, admin_request=? WHERE sid=?",
                 (new_balance, admin_request, sid)
@@ -124,76 +120,39 @@ def admin_pay_fee(sid):
     return redirect(url_for("admin_dashboard"))
 
 # -------------------- Sections --------------------
-@app.route("/admin/add_student/<int:branch_id>/<int:section_id>", methods=["GET", "POST"])
-def admin_add_student(branch_id, section_id):
+@app.route("/admin/add_section/<int:branch_id>", methods=["GET", "POST"])
+def add_section(branch_id):
     if "admin" not in session:
         return redirect(url_for("admin_login"))
-
     with get_db_connection() as conn:
-        # Current branch and section
         branch = conn.execute("SELECT * FROM branches WHERE id=?", (branch_id,)).fetchone()
-        section = conn.execute("SELECT * FROM sections WHERE id=?", (section_id,)).fetchone()
-
-        # All branches for dropdown
-        all_branches = conn.execute("SELECT * FROM branches").fetchall()
-
-        # All sections for the current branch
-        all_sections = conn.execute("SELECT * FROM sections WHERE branch_id=?", (branch_id,)).fetchall()
-
+        sections = conn.execute("SELECT * FROM sections WHERE branch_id=?", (branch_id,)).fetchall()
         if request.method == "POST":
-            sid = request.form["sid"]
-            name = request.form["name"]
-            email = request.form["email"]
-            phone = request.form["phone"]
-            total = float(request.form["total"])
-            paid = float(request.form.get("paid", 0))
-            balance = total - paid
-            raw_password = request.form["password"]
-            hashed_password = generate_password_hash(raw_password)
-
-            # Branch and Section from dropdown
-            selected_branch_id = int(request.form["branch_id"])
-            selected_section_id = int(request.form["section_id"])
-
+            section_name = request.form["section_name"]
             try:
-                conn.execute(
-                    "INSERT INTO students (sid,name,email,phone,total,balance,branch_id,section_id,password) VALUES (?,?,?,?,?,?,?,?,?)",
-                    (sid, name, email, phone, total, balance, selected_branch_id, selected_section_id, hashed_password)
-                )
+                conn.execute("INSERT INTO sections (branch_id,name) VALUES (?,?)", (branch_id, section_name))
                 conn.commit()
-                flash("Student added successfully ✅", "success")
+                flash(f"Section {section_name} added to {branch['name']}", "success")
             except sqlite3.IntegrityError:
-                conn.execute(
-                    "UPDATE students SET name=?, email=?, phone=?, total=?, balance=?, password=?, branch_id=?, section_id=? WHERE sid=?",
-                    (name, email, phone, total, balance, hashed_password, selected_branch_id, selected_section_id, sid)
-                )
-                conn.commit()
-                flash("Student updated successfully 🔄", "info")
-
-            return redirect(url_for("admin_add_student", branch_id=branch_id, section_id=section_id))
-
-    return render_template(
-        "admin_add_student.html",
-        branch=branch,
-        section=section,
-        all_branches=all_branches,
-        all_sections=all_sections
-    )
-
+                flash("Section already exists!", "danger")
+            return redirect(url_for("add_section", branch_id=branch_id))
+    return render_template("add_section.html", branch=branch, sections=sections)
 
 # -------------------- Students --------------------
-@app.route("/admin/add_student/<int:branch_id>/<int:section_id>", methods=["GET", "POST"])
-def admin_add_student(branch_id, section_id):
+@app.route("/admin/add_student", methods=["GET", "POST"])
+def admin_add_student():
     if "admin" not in session:
         return redirect(url_for("admin_login"))
     with get_db_connection() as conn:
-        branch = conn.execute("SELECT * FROM branches WHERE id=?", (branch_id,)).fetchone()
-        section = conn.execute("SELECT * FROM sections WHERE id=?", (section_id,)).fetchone()
+        branches = conn.execute("SELECT * FROM branches").fetchall()
+        sections = conn.execute("SELECT * FROM sections").fetchall()
         if request.method == "POST":
             sid = request.form["sid"]
             name = request.form["name"]
             email = request.form["email"]
             phone = request.form["phone"]
+            branch_id = int(request.form["branch_id"])
+            section_id = int(request.form["section_id"])
             total = float(request.form["total"])
             paid = float(request.form.get("paid", 0))
             balance = total - paid
@@ -213,8 +172,8 @@ def admin_add_student(branch_id, section_id):
                 )
                 conn.commit()
                 flash("Student updated successfully 🔄", "info")
-            return redirect(url_for("admin_add_student", branch_id=branch_id, section_id=section_id))
-    return render_template("admin_add_student.html", branch=branch, section=section)
+            return redirect(url_for("admin_add_student"))
+    return render_template("admin_add_student.html", branches=branches, sections=sections)
 
 @app.route("/admin/view_students/<int:branch_id>/<int:section_id>")
 def view_students(branch_id, section_id):
@@ -281,47 +240,6 @@ def request_admin_payment():
 def student_logout():
     session.pop("student_id", None)
     return redirect(url_for("home"))
-
-# -------------------- UPI Payment Page --------------------
-@app.route("/student/pay")
-def student_pay():
-    if "student_id" not in session:
-        return redirect(url_for("student_login"))
-    sid = session["student_id"]
-    with get_db_connection() as conn:
-        student = conn.execute("SELECT * FROM students WHERE sid=?", (sid,)).fetchone()
-    if not student:
-        flash("Student not found", "danger")
-        return redirect(url_for("student_login"))
-
-    # Render page with QR code only
-    return render_template("pay.html", student=student)
-
-# -------------------- Payment Success --------------------
-@app.route("/payment_success", methods=["POST"])
-def payment_success():
-    sid = session.get("student_id")
-    if sid:
-        with get_db_connection() as conn:
-            # Update student balance to 0
-            conn.execute("UPDATE students SET balance=0, admin_request=0 WHERE sid=?", (sid,))
-            conn.commit()
-
-            # Get updated student details
-            student = conn.execute("SELECT * FROM students WHERE sid=?", (sid,)).fetchone()
-
-        # Convert to dict and calculate paid_amount & due_amount
-        student_dict = dict(student)
-        student_dict['paid_amount'] = student_dict['total'] - student_dict['balance']
-        student_dict['due_amount'] = student_dict['balance']
-
-        flash("Payment Successful ✅", "success")
-        return render_template("student_dashboard.html", student=student_dict)
-
-    flash("Student session expired. Login again.", "danger")
-    return redirect(url_for("student_login"))
-
-
 
 # -------------------- Home --------------------
 @app.route("/")
