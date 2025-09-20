@@ -263,17 +263,11 @@ def student_pay():
         flash("Student not found", "danger")
         return redirect(url_for("student_login"))
 
-    # ✅ Allow full balance payment
-    amount = student["balance"]
-
     return render_template(
         "pay.html",
         student=student,
-        amount=amount,
-        upi_id="7207121020@axl"  # 🔹 your updated UPI ID
+        upi_id="7207121020@axl"  # 🔹 your UPI ID
     )
-
-
 
 
 @app.route("/payment_success", methods=["POST"])
