@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
-import razorpay
 import os
 
 app = Flask(__name__)
@@ -10,11 +9,6 @@ app.config['SESSION_PERMANENT'] = False
 app.config['SESSION_TYPE'] = "filesystem"
 
 DB_PATH = "fee.db"
-
-# -------------------- Razorpay Config --------------------
-RAZORPAY_KEY_ID = "rzp_test_xxxxxxxx"     # 🔹 Replace with your Key ID
-RAZORPAY_KEY_SECRET = "xxxxxxxxxxxxxxx"   # 🔹 Replace with your Key Secret
-razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
 
 # -------------------- Database --------------------
 def get_db_connection():
@@ -231,7 +225,7 @@ def student_dashboard():
     student_dict = dict(student)
     student_dict['paid_amount'] = student_dict['total'] - student_dict['balance']
     student_dict['due_amount'] = student_dict['balance']
-    return render_template("student_dashboard.html", student=student_dict, razorpay_key=RAZORPAY_KEY_ID)
+    return render_template("student_dashboard.html", student=student_dict)
 
 @app.route("/student/request_admin_payment", methods=["POST"])
 def request_admin_payment():
@@ -249,27 +243,22 @@ def student_logout():
     session.pop("student_id", None)
     return redirect(url_for("home"))
 
-# -------------------- Online Payment --------------------
-@app.route("/student/pay", methods=["GET"])
+# -------------------- UPI Payment Page --------------------
+@app.route("/student/pay")
 def student_pay():
     if "student_id" not in session:
         return redirect(url_for("student_login"))
-
     sid = session["student_id"]
     with get_db_connection() as conn:
         student = conn.execute("SELECT * FROM students WHERE sid=?", (sid,)).fetchone()
-
     if not student:
         flash("Student not found", "danger")
         return redirect(url_for("student_login"))
 
-    return render_template(
-        "pay.html",
-        student=student,
-        upi_id="7207121020@axl"  # 🔹 your UPI ID
-    )
+    # Render page with QR code only
+    return render_template("pay.html", student=student)
 
-
+# -------------------- Payment Success --------------------
 @app.route("/payment_success", methods=["POST"])
 def payment_success():
     sid = session.get("student_id")
@@ -280,8 +269,6 @@ def payment_success():
     flash("Payment marked as completed ✅", "success")
     return redirect(url_for("student_dashboard"))
 
-
-
 # -------------------- Home --------------------
 @app.route("/")
 def home():
@@ -291,4 +278,3 @@ def home():
 if __name__ == "__main__":
    port = int(os.environ.get("PORT", 5000)) 
    app.run(host="0.0.0.0", port=port, debug=True)
-

@@ -37,13 +37,8 @@
   <div class="card">
     <h3>Pay with UPI</h3>
     <p>Total Balance Due: ₹{{ student['balance'] }}</p>
-    <p class="note">Pay directly using your UPI app:</p>
-    <p style="font-weight:bold; font-size:18px;">{{ upi_id }}</p>
-
-    {% if upi_id %}
-      <p class="note">Scan QR below to pay:</p>
-      <img src="{{ url_for('static', filename='qrcode.jpg') }}" class="qr" alt="UPI QR Code">
-    {% endif %}
+    <p class="note">Scan the QR code below to pay:</p>
+    <img src="{{ url_for('static', filename='qrcode.jpg') }}" class="qr" alt="UPI QR Code">
   </div>
 </body>
 </html>
