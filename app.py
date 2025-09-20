@@ -250,7 +250,7 @@ def student_logout():
     return redirect(url_for("home"))
 
 # -------------------- Online Payment --------------------
-@app.route("/student/pay", methods=["GET", "POST"])
+@app.route("/student/pay", methods=["GET"])
 def student_pay():
     if "student_id" not in session:
         return redirect(url_for("student_login"))
@@ -263,42 +263,18 @@ def student_pay():
         flash("Student not found", "danger")
         return redirect(url_for("student_login"))
 
-    amount = int(student["balance"] * 100)  # Razorpay takes paise
+    return render_template("pay.html", student=student)
 
-    # Create Razorpay Order
-    order = razorpay_client.order.create(dict(
-        amount=amount,
-        currency="INR",
-        payment_capture="1"
-    ))
-
-    return render_template("pay.html",
-                           student=student,
-                           amount=amount,
-                           razorpay_key=RAZORPAY_KEY_ID,
-                           order=order)
-
-@app.route("/payment/success", methods=["POST"])
+@app.route("/payment_success", methods=["POST"])
 def payment_success():
-    data = request.form
-    # Verify signature
-    try:
-        razorpay_client.utility.verify_payment_signature(data)
-    except razorpay.errors.SignatureVerificationError:
-        flash("Payment verification failed ❌", "danger")
-        return redirect(url_for("student_dashboard"))
-
-    payment_id = data["razorpay_payment_id"]
     sid = session.get("student_id")
     if sid:
         with get_db_connection() as conn:
-            student = conn.execute("SELECT * FROM students WHERE sid=?", (sid,)).fetchone()
-            if student:
-                conn.execute("UPDATE students SET balance=? WHERE sid=?", (0, sid))
-                conn.commit()
-
-    flash(f"Payment Successful ✅ Payment ID: {payment_id}", "success")
+            conn.execute("UPDATE students SET balance=0, admin_request=0 WHERE sid=?", (sid,))
+            conn.commit()
+    flash("Payment marked as completed ✅", "success")
     return redirect(url_for("student_dashboard"))
+
 
 # -------------------- Home --------------------
 @app.route("/")
