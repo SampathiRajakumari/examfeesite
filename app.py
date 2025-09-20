@@ -96,7 +96,20 @@ def admin_dashboard():
     with get_db_connection() as conn:
         branches = conn.execute("SELECT * FROM branches").fetchall()
         requested_students = conn.execute("SELECT * FROM students WHERE admin_request=1").fetchall()
-    return render_template("admin_dashboard.html", branches=branches, requested_students=requested_students)
+
+        # Fetch all sections for each branch
+        sections_dict = {}
+        for branch in branches:
+            sections = conn.execute("SELECT * FROM sections WHERE branch_id=?", (branch['id'],)).fetchall()
+            sections_dict[branch['id']] = sections
+
+    return render_template(
+        "admin_dashboard.html", 
+        branches=branches, 
+        requested_students=requested_students,
+        sections_dict=sections_dict  # pass sections to template
+    )
+
 
 # -------------------- Admin Pay Fee --------------------
 @app.route("/admin/pay_fee/<sid>", methods=["POST"])
