@@ -19,16 +19,12 @@ def get_db_connection():
 def init_db():
     with get_db_connection() as conn:
         cur = conn.cursor()
-
-        # Branch table
         cur.execute("""
             CREATE TABLE IF NOT EXISTS branches (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT UNIQUE NOT NULL
             )
         """)
-
-        # Section table
         cur.execute("""
             CREATE TABLE IF NOT EXISTS sections (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -38,8 +34,6 @@ def init_db():
                 FOREIGN KEY(branch_id) REFERENCES branches(id)
             )
         """)
-
-        # Students table
         cur.execute("""
             CREATE TABLE IF NOT EXISTS students (
                 sid TEXT PRIMARY KEY,
@@ -54,15 +48,10 @@ def init_db():
                 admin_request INTEGER DEFAULT 0
             )
         """)
-
-        # Enforce foreign keys
         cur.execute("PRAGMA foreign_keys=ON")
-
-        # Insert default branches
         branches = ["CSE", "ECE", "Civil", "EEE"]
         for b in branches:
             cur.execute("INSERT OR IGNORE INTO branches (name) VALUES (?)", (b,))
-
         conn.commit()
 
 init_db()
@@ -98,27 +87,6 @@ def admin_dashboard():
         requested_students = conn.execute("SELECT * FROM students WHERE admin_request=1").fetchall()
     return render_template("admin_dashboard.html", branches=branches, requested_students=requested_students)
 
-# -------------------- Admin Pay Fee --------------------
-@app.route("/admin/pay_fee/<sid>", methods=["POST"])
-def admin_pay_fee(sid):
-    if "admin" not in session:
-        return redirect(url_for("admin_login"))
-    amount = float(request.form["amount"])
-    with get_db_connection() as conn:
-        student = conn.execute("SELECT balance FROM students WHERE sid=?", (sid,)).fetchone()
-        if student:
-            new_balance = student["balance"] - amount
-            admin_request = 1 if new_balance > 0 else 0
-            if new_balance < 0:
-                new_balance = 0
-            conn.execute(
-                "UPDATE students SET balance=?, admin_request=? WHERE sid=?",
-                (new_balance, admin_request, sid)
-            )
-            conn.commit()
-    flash(f"Paid ₹{amount} successfully ✅", "success")
-    return redirect(url_for("admin_dashboard"))
-
 # -------------------- Sections --------------------
 @app.route("/admin/add_section/<int:branch_id>", methods=["GET", "POST"])
 def add_section(branch_id):
@@ -139,20 +107,18 @@ def add_section(branch_id):
     return render_template("add_section.html", branch=branch, sections=sections)
 
 # -------------------- Students --------------------
-@app.route("/admin/add_student", methods=["GET", "POST"])
-def admin_add_student():
+@app.route("/admin/add_student/<int:branch_id>/<int:section_id>", methods=["GET", "POST"])
+def admin_add_student(branch_id, section_id):
     if "admin" not in session:
         return redirect(url_for("admin_login"))
     with get_db_connection() as conn:
-        branches = conn.execute("SELECT * FROM branches").fetchall()
-        sections = conn.execute("SELECT * FROM sections").fetchall()
+        branch = conn.execute("SELECT * FROM branches WHERE id=?", (branch_id,)).fetchone()
+        section = conn.execute("SELECT * FROM sections WHERE id=?", (section_id,)).fetchone()
         if request.method == "POST":
             sid = request.form["sid"]
             name = request.form["name"]
             email = request.form["email"]
             phone = request.form["phone"]
-            branch_id = int(request.form["branch_id"])
-            section_id = int(request.form["section_id"])
             total = float(request.form["total"])
             paid = float(request.form.get("paid", 0))
             balance = total - paid
@@ -172,8 +138,8 @@ def admin_add_student():
                 )
                 conn.commit()
                 flash("Student updated successfully 🔄", "info")
-            return redirect(url_for("admin_add_student"))
-    return render_template("admin_add_student.html", branches=branches, sections=sections)
+            return redirect(url_for("admin_add_student", branch_id=branch_id, section_id=section_id))
+    return render_template("admin_add_student.html", branch=branch, section=section)
 
 @app.route("/admin/view_students/<int:branch_id>/<int:section_id>")
 def view_students(branch_id, section_id):
@@ -225,6 +191,31 @@ def student_dashboard():
     student_dict['due_amount'] = student_dict['balance']
     return render_template("student_dashboard.html", student=student_dict)
 
+@app.route("/student/pay")
+def student_pay():
+    if "student_id" not in session:
+        return redirect(url_for("student_login"))
+    sid = session["student_id"]
+    with get_db_connection() as conn:
+        student = conn.execute("SELECT * FROM students WHERE sid=?", (sid,)).fetchone()
+    return render_template("pay.html", student=student)
+
+@app.route("/payment_success", methods=["POST"])
+def payment_success():
+    sid = session.get("student_id")
+    if sid:
+        with get_db_connection() as conn:
+            conn.execute("UPDATE students SET balance=0, admin_request=0 WHERE sid=?", (sid,))
+            conn.commit()
+            student = conn.execute("SELECT * FROM students WHERE sid=?", (sid,)).fetchone()
+        student_dict = dict(student)
+        student_dict['paid_amount'] = student_dict['total'] - student_dict['balance']
+        student_dict['due_amount'] = student_dict['balance']
+        flash("Payment Successful ✅", "success")
+        return render_template("student_dashboard.html", student=student_dict)
+    flash("Student session expired. Login again.", "danger")
+    return redirect(url_for("student_login"))
+
 @app.route("/student/request_admin_payment", methods=["POST"])
 def request_admin_payment():
     if "student_id" not in session:
@@ -248,5 +239,5 @@ def home():
 
 # -------------------- Run App --------------------
 if __name__ == "__main__":
-   port = int(os.environ.get("PORT", 5000)) 
-   app.run(host="0.0.0.0", port=port, debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)
