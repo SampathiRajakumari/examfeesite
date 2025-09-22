@@ -73,16 +73,17 @@ form input, form select {
             <option value="{{ b.id }}">{{ b.name }}</option>
             {% endfor %}
         </select>
+         <label>Section:</label>
+        <input type="section" name="section" required>
 
-        <label>Section:</label>
-        <select name="section_id" required>
-            <option value="">--Select Section--</option>
-            {% for s in sections %}
-            <option value="{{ s.id }}">{{ s.name }}</option>
-            {% endfor %}
-        </select>
+        
 
         <button type="submit" class="btn">Submit</button>
+
+        <div style="text-align:right; margin-bottom:20px;">
+            <a href="{{ url_for('admin_logout_redirect') }}" class="btn" style="background-color:#dc3545;">Logout</a>
+        </div>
+
     </form>
 </div>
 
